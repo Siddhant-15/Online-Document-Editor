@@ -1,0 +1,185 @@
+/* TextEditor.module.css */
+
+.editor-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  
+  .editor-header {
+    height: 64px;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 0 16px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    z-index: 10;
+  }
+  
+  .editor-title-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+    flex: 1;
+  }
+  
+  .editor-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #4f46e5;
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  
+  .editor-logo:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+  }
+  
+  .editor-title-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+  
+  .editor-title-input {
+    font-size: 1.18rem;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    padding: 4px 8px;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 420px;
+    color: #0f172a;
+  }
+  
+  .editor-title-input:focus {
+    outline: none;
+    background: #f1f5f9;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  }
+  
+  .editor-title-input::placeholder {
+    color: #94a3b8;
+    font-weight: 500;
+  }
+  
+  .editor-status {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 2px;
+    padding-left: 8px;
+  }
+  
+  .editor-status.error {
+    color: #ef4444;
+  }
+  
+  .editor-presence {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .presence-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 6px;
+    border-radius: 9999px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    transition: all 0.13s;
+  }
+  
+  .presence-pill:hover {
+    background: #e2e8f0;
+    transform: translateY(-1px);
+  }
+  
+  .presence-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .presence-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .presence-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1e293b;
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Editor area */
+  .editor-main {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background: #ffffff;
+  }
+  
+  .editor-container {
+    height: 100%;
+  }
+  
+  /* Make Quill look a bit cleaner */
+  :global(.ql-container) {
+    font-size: 16px;
+    line-height: 1.58;
+    height: 100%;
+  }
+  
+  :global(.ql-editor) {
+    min-height: 100%;
+    padding: 32px 48px;
+    background: white;
+    box-shadow: 0 0 0 1px #e2e8f0 inset;
+  }
+  
+  /* Optional: better toolbar styling */
+  :global(.ql-toolbar) {
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 8px 16px !important;
+  }
+  
+  /* Loading / disabled state */
+  :global(.ql-disabled .ql-editor) {
+    opacity: 0.6;
+    background: #f8fafc;
+  }
