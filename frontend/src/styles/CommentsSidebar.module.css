@@ -1,0 +1,45 @@
+.sidebar {
+  width: 300px;
+  background-color: #f9fafb;
+  border-left: 1px solid #e5e7eb;
+  padding: 1rem;
+  overflow-y: auto;
+  position: relative;
+  height: calc(100vh - 80px); /* Adjust based on your header height */
+}
+
+.header {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+.commentsList {
+  position: relative;
+  height: 100%;
+}
+
+.commentCard {
+  position: absolute;
+  width: 100%;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: top 0.2s ease;
+}
+
+.commentAuthor {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.commentText {
+  font-size: 0.875rem;
+  color: #4b5563;
+}

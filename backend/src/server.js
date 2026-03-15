@@ -31,6 +31,10 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
 
-// const aiRoutes = require("./routes/aiRoutes")
+const aiRoutes = require("./routes/aiRoutes")
+const commentRoutes = require("./routes/commentRoutes")
+const exportRoutes = require("./routes/exportRoutes")
 
-// app.use("/ai", aiRoutes)
+app.use("/ai", aiRoutes)
+app.use("/comments", commentRoutes)
+app.use("/export", exportRoutes)
