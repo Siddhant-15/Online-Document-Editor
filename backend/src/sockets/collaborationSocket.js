@@ -41,11 +41,17 @@ module.exports = function(server) {
     })
 
 
-    // Real-time typing
+    // Real-time text changes
     socket.on("send-changes", ({ documentId, delta }) => {
 
       socket.to(documentId).emit("receive-changes", delta)
 
+    })
+
+    // Typing indicator
+    socket.on("user-typing", ({ documentId, user }) => {
+      if (!documentId || !user) return
+      socket.to(documentId).emit("user-typing", user)
     })
 
 

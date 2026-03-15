@@ -5,6 +5,7 @@ import QuillCursors from "quill-cursors"
 import { io } from "socket.io-client"
 import { useNavigate, useParams } from "react-router-dom"
 import { useAuth } from "./AuthContext"
+import ShareModal from "./ShareModal"
 import styles from "./styles/TextEditor.module.css"
 
 Quill.register("modules/cursors", QuillCursors)
@@ -57,9 +58,11 @@ export default function TextEditor() {
 
   const [title, setTitle] = useState("")
   const [presentUsers, setPresentUsers] = useState([])
+  const [typingUsers, setTypingUsers] = useState({})
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [showShare, setShowShare] = useState(false)
 
   /*
   ==============================
@@ -193,12 +196,23 @@ export default function TextEditor() {
         documentId,
         delta,
       })
+
+      const userId = user?._id || user?.id || "anonymous"
+      socket.emit("user-typing", {
+        documentId,
+        user: {
+          id: userId,
+          name: user?.name || "Guest",
+          avatar: user?.avatar,
+          color: randomColorForUser(userId),
+        },
+      })
     }
 
     quill.on("text-change", handler)
 
     return () => quill.off("text-change", handler)
-  }, [socket, quill, documentId])
+  }, [socket, quill, documentId, user])
 
   /*
   ==============================
@@ -277,6 +291,47 @@ export default function TextEditor() {
     socket.on("users-present", handler)
 
     return () => socket.off("users-present", handler)
+  }, [socket])
+
+  /*
+  ==============================
+  TYPING INDICATORS
+  ==============================
+  */
+
+  useEffect(() => {
+    if (!socket) return
+
+    const handleTyping = (userInfo) => {
+      if (!userInfo || !userInfo.id) return
+      setTypingUsers((prev) => ({
+        ...prev,
+        [userInfo.id]: {
+          ...userInfo,
+          last: Date.now(),
+        },
+      }))
+    }
+
+    socket.on("user-typing", handleTyping)
+
+    const interval = setInterval(() => {
+      const now = Date.now()
+      setTypingUsers((prev) => {
+        const next = {}
+        Object.keys(prev).forEach((id) => {
+          if (now - prev[id].last < 2000) {
+            next[id] = prev[id]
+          }
+        })
+        return next
+      })
+    }, 1000)
+
+    return () => {
+      socket.off("user-typing", handleTyping)
+      clearInterval(interval)
+    }
   }, [socket])
 
   /*
@@ -366,12 +421,62 @@ export default function TextEditor() {
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <div className={styles["editor-presence"]}>
-          {presentUsers.map((u) => (
-            <div key={u.id} className={styles["presence-pill"]}>
-              {u.name}
+        <div className={styles["editor-actions"]}>
+          <button
+            type="button"
+            className={styles["share-button"]}
+            onClick={() => setShowShare(true)}
+            disabled={!documentId || documentId === "new"}
+          >
+            Share
+          </button>
+
+          <div className={styles["editor-presence"]}>
+            <div className={styles["presence-stack"]}>
+              {presentUsers.slice(0, 3).map((u) => {
+                const initials = (u.name || "?")
+                  .split(" ")
+                  .map((part) => part[0]?.toUpperCase() || "")
+                  .join("")
+
+                const id = u.id || u.userId
+                const isTyping = !!typingUsers[id]
+
+                return (
+                  <div
+                    key={id}
+                    className={`${styles["presence-pill"]} ${
+                      isTyping ? styles.typing : ""
+                    }`}
+                    title={u.name}
+                  >
+                    <div className={styles["presence-avatar"]}>
+                      {u.avatar ? (
+                        <img src={u.avatar} alt={u.name} />
+                      ) : (
+                        initials
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+
+              {presentUsers.length > 3 && (
+                <div className={styles["presence-more"]}>
+                  +{presentUsers.length - 3}
+                </div>
+              )}
             </div>
-          ))}
+            {!!Object.keys(typingUsers).length && (
+              <div className={styles["typing-indicator"]}>
+                {Object.values(typingUsers)
+                  .map((u) => u.name)
+                  .slice(0, 2)
+                  .join(", ")}
+                {Object.keys(typingUsers).length > 2 && " and others"} typing…
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -381,6 +486,15 @@ export default function TextEditor() {
           ref={wrapperRef}
         />
       </main>
+
+      {showShare && (
+        <ShareModal
+          documentId={documentId}
+          token={token}
+          apiBaseUrl={apiBaseUrl}
+          onClose={() => setShowShare(false)}
+        />
+      )}
     </div>
   )
 }

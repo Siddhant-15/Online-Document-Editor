@@ -17,6 +17,7 @@ app.use(express.json())
 
 app.use("/auth", require("./routes/authRoutes"))
 app.use("/documents", require("./routes/documentRoutes"))
+app.use("/documents", require("./routes/shareRoutes"))
 
 connectDB()
 
