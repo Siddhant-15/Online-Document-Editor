@@ -491,6 +491,7 @@ export default function TextEditor() {
       const data = await res.json()
       if (res.ok && data.result) {
         setAiPreviewParams({
+          action: actionPath,
           result: data.result,
           range,
           bounds: quill.getBounds(range.index, range.length)
@@ -753,12 +754,14 @@ export default function TextEditor() {
                 >
                   Discard
                 </button>
-                <button
-                  onClick={handleAiAccept}
-                  style={{ padding: "6px 12px", background: "#ef4444", border: "none", borderRadius: "6px", cursor: "pointer", color: "white", fontWeight: "bold" }}
-                >
-                  Apply Changes
-                </button>
+                {aiPreviewParams.action !== "summarize" && (
+                  <button
+                    onClick={handleAiAccept}
+                    style={{ padding: "6px 12px", background: "#ef4444", border: "none", borderRadius: "6px", cursor: "pointer", color: "white", fontWeight: "bold" }}
+                  >
+                    Apply Changes
+                  </button>
+                )}
               </div>
             </div>
           )}

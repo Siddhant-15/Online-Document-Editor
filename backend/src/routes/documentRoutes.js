@@ -94,7 +94,7 @@ router.put("/:id", auth, async (req, res) => {
     const document = await Document.findOneAndUpdate(
       { _id: req.params.id, owner: req.user.userId },
       updates,
-      { new: true }
+      { returnDocument: "after" }
     )
 
     if (!document) {
@@ -117,7 +117,7 @@ router.patch("/:id", auth, async (req, res) => {
     const document = await Document.findOneAndUpdate(
       { _id: req.params.id, owner: req.user.userId },
       updates,
-      { new: true }
+      { returnDocument: "after" }
     )
 
     if (!document) {
