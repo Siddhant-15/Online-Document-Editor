@@ -329,25 +329,41 @@
     flex: 1;
     overflow: hidden;
     position: relative;
-    background: #ffffff;
+    background: #f8fafc;
   }
   
   .editor-container {
-    height: 100%;
+    height: auto;
   }
   
   /* Make Quill look a bit cleaner */
   :global(.ql-container) {
     font-size: 16px;
     line-height: 1.58;
-    height: 100%;
+    width: 816px !important;
+    margin: 0 auto;
+    border: none !important;
   }
   
   :global(.ql-editor) {
-    min-height: 100%;
-    padding: 32px 48px;
-    background: white;
-    box-shadow: 0 0 0 1px #e2e8f0 inset;
+    position: relative !important;
+    width: 816px !important;
+    min-height: 1056px !important;
+    padding: 96px 96px 96px 96px !important;
+    margin: 32px auto 0 !important;
+    background-color: transparent !important;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      white 0px,
+      white 1056px,
+      transparent 1056px,
+      transparent 1088px
+    ) !important;
+    background-size: 100% 1088px !important;
+    background-position: 0 0 !important;
+    box-shadow: none !important;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    overflow: hidden !important;
   }
   
   /* Optional: better toolbar styling */
