@@ -76,6 +76,10 @@ export default function TextEditor() {
   // AI Preview dialog state
   const [aiPreviewParams, setAiPreviewParams] = useState(null)
 
+  // Custom comment dialog state
+  const [commentDialogParams, setCommentDialogParams] = useState(null)
+  const [newCommentText, setNewCommentText] = useState("")
+
   /*
   ==============================
   SOCKET CONNECTION
@@ -311,8 +315,11 @@ export default function TextEditor() {
           setSelectedRange(null)
         }
       } else if (source === "user" && !range) {
-        setAiMenuVisible(false)
-        setSelectedRange(null)
+        // Only hide AI menu if we are not typing a comment and not previewing AI
+        if (!commentDialogParams && !aiPreviewParams) {
+          setAiMenuVisible(false)
+          setSelectedRange(null)
+        }
       }
     }
 
@@ -519,16 +526,23 @@ export default function TextEditor() {
     setAiPreviewParams(null)
   }
 
-  const handleAddComment = async () => {
+  const handleAddComment = () => {
     if (!quill) return
-    const range = quill.getSelection()
+    const range = selectedRange || quill.getSelection()
     if (!range || range.length === 0) {
       alert("Please select some text to comment on.")
       return
     }
 
-    const text = window.prompt("Enter your comment:")
-    if (!text) return
+    const bounds = quill.getBounds(range.index, range.length)
+    setAiMenuVisible(false)
+    setCommentDialogParams({ range, bounds })
+    setNewCommentText("")
+  }
+
+  const submitComment = async () => {
+    if (!quill || !commentDialogParams || !newCommentText.trim()) return
+    const { range } = commentDialogParams
 
     try {
       const res = await fetch(`${apiBaseUrl}/comments`, {
@@ -540,15 +554,15 @@ export default function TextEditor() {
         body: JSON.stringify({
           documentId,
           userId: user?._id || user?.id,
-          text,
+          text: newCommentText.trim(),
           position: { index: range.index, length: range.length }
         }),
       })
 
       if (res.ok) {
-        alert("Comment added!")
         quill.formatText(range.index, range.length, { background: '#fef08a' }) // highlight text
         fetchComments()
+        setCommentDialogParams(null)
       } else {
         alert("Failed to add comment")
       }
@@ -562,12 +576,14 @@ export default function TextEditor() {
     if (!quill || !comment.position) return
     const { index, length } = comment.position
 
+    quill.setSelection(index, length, 'api')
+
     // Flash a brighter color
-    quill.formatText(index, length, { background: '#fb923c' }) // orange-400
+    quill.formatText(index, length, { background: '#fb923c' }, 'api') // orange-400
 
     // Revert back to yellow after 1.5 seconds
     setTimeout(() => {
-      quill.formatText(index, length, { background: '#fef08a' }) // yellow-200
+      quill.formatText(index, length, { background: '#fef08a' }, 'api') // yellow-200
     }, 1500)
   }
 
@@ -762,6 +778,58 @@ export default function TextEditor() {
                     Apply Changes
                   </button>
                 )}
+              </div>
+            </div>
+          )}
+
+          {commentDialogParams && (
+            <div
+              style={{
+                position: "absolute",
+                top: `${commentDialogParams.bounds.bottom + 10}px`,
+                left: `${Math.max(10, commentDialogParams.bounds.left)}px`,
+                width: "300px",
+                backgroundColor: "white",
+                boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+                borderRadius: "12px",
+                padding: "16px",
+                zIndex: 100,
+                border: "1px solid #e5e7eb",
+                fontFamily: "Inter, sans-serif"
+              }}
+            >
+              <h4 style={{ margin: "0 0 8px 0", color: "#374151", fontSize: "14px", fontWeight: "600" }}>Add Comment</h4>
+              <textarea
+                value={newCommentText}
+                onChange={(e) => setNewCommentText(e.target.value)}
+                placeholder="Type your comment here..."
+                rows={3}
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  padding: "8px",
+                  borderRadius: "6px",
+                  border: "1px solid #d1d5db",
+                  marginBottom: "12px",
+                  fontFamily: "inherit",
+                  fontSize: "14px",
+                  resize: "none"
+                }}
+              />
+              <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                <button
+                  onClick={() => setCommentDialogParams(null)}
+                  style={{ padding: "6px 12px", background: "white", border: "1px solid #d1d5db", borderRadius: "6px", cursor: "pointer", color: "#4b5563", fontSize: "14px" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={submitComment}
+                  disabled={!newCommentText.trim()}
+                  style={{ padding: "6px 12px", background: "#10b981", border: "none", borderRadius: "6px", cursor: "pointer", color: "white", fontWeight: "600", fontSize: "14px", opacity: newCommentText.trim() ? 1 : 0.5 }}
+                >
+                  Comment
+                </button>
               </div>
             </div>
           )}

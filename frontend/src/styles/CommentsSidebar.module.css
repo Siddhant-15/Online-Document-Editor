@@ -32,14 +32,41 @@
   transition: top 0.2s ease;
 }
 
+.commentHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #6366f1;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .commentAuthor {
   font-size: 0.875rem;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 0.25rem;
 }
 
 .commentText {
   font-size: 0.875rem;
   color: #4b5563;
+  line-height: 1.4;
 }
