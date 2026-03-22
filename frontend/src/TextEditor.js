@@ -61,8 +61,8 @@ export default function TextEditor() {
   const [presentUsers, setPresentUsers] = useState([])
   const [typingUsers, setTypingUsers] = useState({})
 
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  const [, setLoading] = useState(true)
+  const [, setError] = useState("")
   const [showShare, setShowShare] = useState(false)
   
   const [aiLoading, setAiLoading] = useState(false)
@@ -194,6 +194,7 @@ export default function TextEditor() {
     return () => {
       cancelled = true
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, socket, quill, token])
 
   /*
@@ -220,6 +221,7 @@ export default function TextEditor() {
 
   useEffect(() => {
     fetchComments()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documentId, token])
 
   /*
@@ -337,6 +339,7 @@ export default function TextEditor() {
       quill.off("selection-change", handleSelection)
       socket.off("cursor-update", handleCursorUpdate)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, quill, user, documentId])
 
   /*
@@ -436,6 +439,7 @@ export default function TextEditor() {
     }, 500)
 
     return () => clearTimeout(timeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, documentId])
 
   /*
