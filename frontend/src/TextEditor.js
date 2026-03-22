@@ -444,6 +444,42 @@ export default function TextEditor() {
 
   /*
   ==============================
+  PAGINATION (A4)
+  ==============================
+  */
+  useEffect(() => {
+    if (!quill) return
+
+    const updatePages = () => {
+      const editorEl = document.querySelector('.ql-editor')
+      if (!editorEl) return
+
+      const lastChild = editorEl.lastElementChild
+      const contentBottom = lastChild ? (lastChild.offsetTop + lastChild.offsetHeight) : 0
+      
+      // 96px is the bottom padding we set in CSS
+      const naturalHeight = contentBottom + 96
+      
+      const PAGE_HEIGHT = 1056
+      const GAP = 32
+      const UNIT = PAGE_HEIGHT + GAP
+
+      // Evaluate how many pages are required
+      const pages = Math.max(1, Math.ceil((naturalHeight + GAP) / UNIT))
+      
+      const newHeight = `${pages * UNIT - GAP}px`
+      editorEl.style.minHeight = newHeight
+      editorEl.style.height = newHeight
+    }
+
+    quill.on("text-change", updatePages)
+    setTimeout(updatePages, 100) // Initial calculation
+
+    return () => quill.off("text-change", updatePages)
+  }, [quill])
+
+  /*
+  ==============================
   QUILL INIT
   ==============================
   */
@@ -712,8 +748,8 @@ export default function TextEditor() {
       </header>
 
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-        <main className={styles["editor-main"]} style={{ flex: 1, overflowY: "auto", position: "relative" }}>
-          <div style={{ position: "relative", width: "100%", maxWidth: "900px", margin: "0 auto", backgroundColor: "white", minHeight: "80vh", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", marginTop: "2rem" }}>
+        <main className={styles["editor-main"]} style={{ flex: 1, overflowY: "auto", position: "relative", backgroundColor: "#f8fafc" }}>
+          <div style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center", paddingBottom: "4rem" }}>
           
           <div
             className={styles["editor-container"]}
